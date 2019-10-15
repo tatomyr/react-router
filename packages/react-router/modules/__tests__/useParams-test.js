@@ -58,6 +58,29 @@ describe("useParams", () => {
       });
     });
 
+    it("returns a hash of the URL params and their values when a param contains an encoded % sign", () => {
+      let params;
+
+      function BlogPost() {
+        params = useParams();
+        return null;
+      }
+
+      renderStrict(
+        <MemoryRouter initialEntries={[`/blog/${encodeURIComponent("25%")}`]}>
+          <Route path="/blog/:slug">
+            <BlogPost />
+          </Route>
+        </MemoryRouter>,
+        node
+      );
+
+      expect(typeof params).toBe("object");
+      expect(params).toMatchObject({
+        slug: encodeURIComponent("25%")
+      });
+    });
+
     describe("a child route", () => {
       it("returns a combined hash of the parent and child params", () => {
         let params;
